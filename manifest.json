@@ -1,10 +1,16 @@
 {
   "manifest_version": 3,
   "name": "Job Autofill",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Auto-detects and fills common job application form fields from your saved profile.",
-  "permissions": ["storage", "activeTab", "tabs"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "action": {
     "default_popup": "popup.html"
   },
@@ -13,16 +19,29 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "exclude_matches": ["https://web.whatsapp.com/*"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "exclude_matches": [
+        "https://web.whatsapp.com/*"
+      ],
       "all_frames": true,
-      "js": ["fieldMap.js", "content.js"],
-      "css": ["content.css"],
+      "js": [
+        "fieldMap.js",
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://web.whatsapp.com/*"],
-      "js": ["whatsapp.js"],
+      "matches": [
+        "https://web.whatsapp.com/*"
+      ],
+      "js": [
+        "whatsapp.js"
+      ],
       "run_at": "document_idle"
     }
   ]

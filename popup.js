@@ -2,33 +2,61 @@ const PROFILE_KEY = 'jobAutofillProfile';
 const OVERRIDES_KEY = 'jobAutofillOverrides';
 const SITES_KEY = 'jobAutofillSites';
 
+function buildField(def, profile) {
+  const wrap = document.createElement('div');
+  wrap.className = 'field-group' + (def.type === 'textarea' ? ' wide' : '');
+
+  const label = document.createElement('label');
+  label.textContent = def.label;
+  label.setAttribute('for', 'f_' + def.key);
+  wrap.appendChild(label);
+
+  let input;
+  if (def.type === 'textarea') {
+    input = document.createElement('textarea');
+  } else if (def.type === 'boolean') {
+    input = document.createElement('select');
+    ['', 'yes', 'no'].forEach((v) => {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v === '' ? '(blank)' : v;
+      input.appendChild(opt);
+    });
+  } else {
+    input = document.createElement('input');
+    input.type = 'text';
+  }
+  input.id = 'f_' + def.key;
+  input.value = profile[def.key] || '';
+  wrap.appendChild(input);
+  return wrap;
+}
+
+function fieldHasValue(def, profile) {
+  return !!profile[def.key];
+}
+
 function buildForm(profile) {
   const form = document.getElementById('profileForm');
   form.innerHTML = '';
-  FIELD_DEFS.forEach((def) => {
-    const label = document.createElement('label');
-    label.textContent = def.label;
-    label.setAttribute('for', 'f_' + def.key);
-    form.appendChild(label);
+  FIELD_GROUPS.forEach((group) => {
+    const defs = FIELD_DEFS.filter((d) => d.group === group.id);
+    if (!defs.length) return;
 
-    let input;
-    if (def.type === 'textarea') {
-      input = document.createElement('textarea');
-    } else if (def.type === 'boolean') {
-      input = document.createElement('select');
-      ['', 'yes', 'no'].forEach((v) => {
-        const opt = document.createElement('option');
-        opt.value = v;
-        opt.textContent = v === '' ? '(blank)' : v;
-        input.appendChild(opt);
-      });
-    } else {
-      input = document.createElement('input');
-      input.type = 'text';
-    }
-    input.id = 'f_' + def.key;
-    input.value = profile[def.key] || '';
-    form.appendChild(input);
+    const details = document.createElement('details');
+    details.className = 'fieldset';
+    if (group.open || defs.some((d) => fieldHasValue(d, profile))) details.open = true;
+
+    const summary = document.createElement('summary');
+    summary.textContent = group.label;
+    details.appendChild(summary);
+
+    const body = document.createElement('div');
+    body.className = 'fieldset-body';
+    defs.forEach((def) => body.appendChild(buildField(def, profile)));
+    details.appendChild(body);
+
+    form.appendChild(details);
   });
 }
 

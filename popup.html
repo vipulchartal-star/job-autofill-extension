@@ -2,32 +2,46 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Job Autofill</title>
 <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <h1>Job Autofill — your profile</h1>
-  <p class="hint">Filled once here, used everywhere. Leave fields blank to skip them.</p>
+  <header>
+    <h1>Job Autofill</h1>
+    <p class="hint">Fill once, reuse everywhere. Leave blank to skip.</p>
+  </header>
+
   <form id="profileForm"></form>
-  <div class="row">
+
+  <details class="section">
+    <summary>Job sites</summary>
+    <div class="section-body">
+      <textarea id="sitesList" rows="4" placeholder="https://jobs.lever.co/yourcompany&#10;https://boards.greenhouse.io/yourcompany"></textarea>
+      <div class="row">
+        <button id="saveSites" type="button" class="secondary">Save sites</button>
+        <span id="saveSitesStatus" class="status"></span>
+      </div>
+      <button id="openAll" type="button" class="secondary full">Open all &amp; autofill</button>
+      <p class="hint">Opens each in a background tab and autofills it. You still review and hit submit yourself.</p>
+    </div>
+  </details>
+
+  <details class="section">
+    <summary>Trained mappings</summary>
+    <div class="section-body">
+      <p id="trainedInfo" class="hint"></p>
+      <button id="clearTrained" type="button" class="danger full">Clear trained mappings</button>
+    </div>
+  </details>
+
+  <div class="actionbar">
+    <button id="runHere" type="button" class="secondary">Run on this tab</button>
     <button id="save" type="button">Save profile</button>
-    <span id="saveStatus"></span>
   </div>
-  <hr>
-  <button id="runHere" type="button">Run autofill on this tab</button>
-  <div id="runStatus"></div>
-  <hr>
-  <label for="sitesList">Job sites (one URL per line)</label>
-  <textarea id="sitesList" rows="5" placeholder="https://jobs.lever.co/yourcompany&#10;https://boards.greenhouse.io/yourcompany"></textarea>
-  <div class="row">
-    <button id="saveSites" type="button">Save sites</button>
-    <span id="saveSitesStatus"></span>
-  </div>
-  <button id="openAll" type="button">Open all &amp; autofill</button>
-  <p class="hint">Opens each in a background tab, waits for it to load, then autofills. You still review and hit submit on each one yourself.</p>
-  <hr>
-  <div id="trainedInfo" class="hint"></div>
-  <button id="clearTrained" type="button" class="danger">Clear trained mappings</button>
+  <div class="status" id="saveStatus"></div>
+  <div class="status" id="runStatus"></div>
+
   <script src="fieldMap.js"></script>
   <script src="popup.js"></script>
 </body>

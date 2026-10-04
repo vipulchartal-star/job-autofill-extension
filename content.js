@@ -157,8 +157,24 @@
 
     for (const el of elements) {
       const type = (el.type || '').toLowerCase();
-      if (SKIP_TYPES.includes(type)) continue;
       if (el.disabled || el.readOnly) continue;
+
+      if (type === 'file') {
+        if (!profile.resumeFilePath) continue;
+        if (!/resume|\bcv\b/.test(getSignal(el))) continue;
+        const token = 'jaf' + Math.random().toString(36).slice(2);
+        el.setAttribute('data-jaf-file-id', token);
+        chrome.runtime.sendMessage(
+          { type: 'ATTACH_FILE', selector: `[data-jaf-file-id="${token}"]`, filePath: profile.resumeFilePath },
+          (res) => {
+            if (res && res.ok) { highlight(el); showToast('Resume file attached'); }
+            else { showToast('Could not auto-attach resume file — attach it manually'); }
+          }
+        );
+        continue;
+      }
+
+      if (SKIP_TYPES.includes(type)) continue;
 
       if (type === 'radio') {
         if (!el.name || handledRadioNames.has(el.name)) continue;

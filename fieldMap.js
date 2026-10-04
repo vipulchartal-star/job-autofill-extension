@@ -57,6 +57,10 @@ const FIELD_DEFS = [
     keywords: ['relocate', 'willingtorelocate', 'relocation'] },
   { key: 'resumeText', label: 'Resume (plain text, for paste-resume fallback fields)', type: 'textarea',
     keywords: ['resumetext', 'pasteresume', 'resume'] },
+  // No keywords on purpose: never auto-selected by the generic keyword matcher — content.js
+  // reads this directly for actual <input type=file> resume-upload fields (see ATTACH_FILE).
+  { key: 'resumeFilePath', label: 'Resume file path (absolute path on this computer, desktop Chrome only)', type: 'text',
+    keywords: [] },
 ];
 
 // Deliberately excluded: gender, race/ethnicity, disability, veteran status (EEO/voluntary

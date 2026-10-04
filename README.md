@@ -50,10 +50,35 @@ third arg to have it click Send automatically after the text appears:
 Use autosend sparingly and only for messages you're sure about — it's a real send to a real
 contact, same as if you'd typed and hit enter.
 
+## Resume file upload (desktop Chrome only)
+
+Set "Resume file path" in the popup to an absolute path on disk (e.g. `/home/you/resume.pdf`).
+When a file input on the page looks like a resume/CV upload, the extension uses Chrome's
+DevTools protocol (`chrome.debugger` + `DOM.setFileInputFiles`) to attach that exact file —
+the only way to set a file input at all, since plain JS can never do it (browser security).
+Chrome shows its own "is debugging this browser" banner while this runs; it detaches right
+after. Needs a real local file path, so this only works on desktop Chrome, not Kiwi/Android.
+
+If a site instead has a "paste resume as text" fallback field, save your resume text under
+"Resume (plain text...)" in the profile and that gets typed in normally.
+
+## Auto-update from GitHub releases
+
+While `npm run dev` is running, the dev server checks this repo's latest release every 10
+minutes (`gh release view`, reusing your logged-in `gh` CLI — no token stored in the code). A
+newer tag is downloaded and extracted over this folder, then the existing live-reload path
+reloads the extension — same mechanism as editing a file by hand. Trigger a check immediately:
+
+```bash
+curl -X POST http://localhost:8788/check-update
+```
+
+This only updates copies that share a filesystem with the running dev server (this phone's
+Kiwi copy, if pointed at a folder here). A separate PC copy needs its own dev server pointed
+at its own folder, or a manual re-pull — Chrome has no real silent auto-update path for
+extensions outside the Chrome Web Store or enterprise policy.
+
 ## Known limits
 
-- **Resume/file upload fields can't be auto-filled** — browsers block scripts from setting
-  `<input type="file">` values (security). If a site has a "paste resume as text" fallback field,
-  save your resume text under "Resume (plain text...)" in the profile and that gets filled.
 - AI fallback for unmatched fields is a stubbed-out hook, not wired up (no API key configured yet).
   Pattern + label matching + training covers the common cases without needing one.

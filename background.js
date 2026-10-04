@@ -67,26 +67,65 @@ chrome.runtime.onInstalled.addListener(() => {
 // Opens each saved site in its own background tab, waits for it to finish loading (plus a
 // settle delay for SPA forms that render late), then asks that tab's content script to
 // autofill. Never submits anything — you review and click submit yourself on each tab.
-chrome.runtime.onMessage.addListener((msg) => {
-  if (!msg || msg.type !== 'OPEN_AND_FILL_ALL') return;
-  chrome.storage.local.get(['jobAutofillSites'], (data) => {
-    const sites = data.jobAutofillSites || [];
-    sites.forEach((url, idx) => {
-      setTimeout(() => {
-        chrome.tabs.create({ url, active: false }, (tab) => {
-          const listener = (tabId, changeInfo) => {
-            if (tabId !== tab.id || changeInfo.status !== 'complete') return;
-            chrome.tabs.onUpdated.removeListener(listener);
-            setTimeout(() => {
-              chrome.tabs.sendMessage(tab.id, { type: 'RUN_AUTOFILL' }, () => {
-                // ignore errors (e.g. page blocks content scripts) — best effort per tab
-                void chrome.runtime.lastError;
-              });
-            }, 1800);
-          };
-          chrome.tabs.onUpdated.addListener(listener);
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (!msg) return;
+
+  if (msg.type === 'OPEN_AND_FILL_ALL') {
+    chrome.storage.local.get(['jobAutofillSites'], (data) => {
+      const sites = data.jobAutofillSites || [];
+      sites.forEach((url, idx) => {
+        setTimeout(() => {
+          chrome.tabs.create({ url, active: false }, (tab) => {
+            const listener = (tabId, changeInfo) => {
+              if (tabId !== tab.id || changeInfo.status !== 'complete') return;
+              chrome.tabs.onUpdated.removeListener(listener);
+              setTimeout(() => {
+                chrome.tabs.sendMessage(tab.id, { type: 'RUN_AUTOFILL' }, () => {
+                  // ignore errors (e.g. page blocks content scripts) — best effort per tab
+                  void chrome.runtime.lastError;
+                });
+              }, 1800);
+            };
+            chrome.tabs.onUpdated.addListener(listener);
+          });
+        }, idx * 700);
+      });
+    });
+    return;
+  }
+
+  if (msg.type === 'ATTACH_FILE') {
+    const tabId = sender.tab && sender.tab.id;
+    if (!tabId) { sendResponse({ ok: false }); return; }
+    attachFileToInput(tabId, msg.selector, msg.filePath).then((ok) => sendResponse({ ok }));
+    return true; // keep the message channel open for the async response
+  }
+});
+
+// Uses the Chrome DevTools Protocol (chrome.debugger) to set a real file on an
+// <input type=file> — the only way to do this at all, since plain JS can never set a file
+// input's value (browser security). Shows Chrome's own "is debugging this browser" banner
+// while attached; detaches immediately after. filePath must be an absolute path on THIS
+// computer (desktop Chrome) — unsupported on most mobile browsers.
+function attachFileToInput(tabId, selector, filePath) {
+  return new Promise((resolve) => {
+    chrome.debugger.attach({ tabId }, '1.3', () => {
+      if (chrome.runtime.lastError) { resolve(false); return; }
+      const fail = () => { chrome.debugger.detach({ tabId }, () => {}); resolve(false); };
+      chrome.debugger.sendCommand({ tabId }, 'DOM.enable', {}, () => {
+        if (chrome.runtime.lastError) return fail();
+        chrome.debugger.sendCommand({ tabId }, 'DOM.getDocument', {}, (doc) => {
+          if (chrome.runtime.lastError || !doc) return fail();
+          chrome.debugger.sendCommand({ tabId }, 'DOM.querySelector', { nodeId: doc.root.nodeId, selector }, (res) => {
+            if (chrome.runtime.lastError || !res || !res.nodeId) return fail();
+            chrome.debugger.sendCommand({ tabId }, 'DOM.setFileInputFiles', { files: [filePath], nodeId: res.nodeId }, () => {
+              const ok = !chrome.runtime.lastError;
+              chrome.debugger.detach({ tabId }, () => {});
+              resolve(ok);
+            });
+          });
         });
-      }, idx * 700);
+      });
     });
   });
-});
+}

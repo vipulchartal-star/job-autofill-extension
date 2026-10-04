@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Job Autofill</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <h1>Job Autofill — your profile</h1>
+  <p class="hint">Filled once here, used everywhere. Leave fields blank to skip them.</p>
+  <form id="profileForm"></form>
+  <div class="row">
+    <button id="save" type="button">Save profile</button>
+    <span id="saveStatus"></span>
+  </div>
+  <hr>
+  <button id="runHere" type="button">Run autofill on this tab</button>
+  <div id="runStatus"></div>
+  <hr>
+  <label for="sitesList">Job sites (one URL per line)</label>
+  <textarea id="sitesList" rows="5" placeholder="https://jobs.lever.co/yourcompany&#10;https://boards.greenhouse.io/yourcompany"></textarea>
+  <div class="row">
+    <button id="saveSites" type="button">Save sites</button>
+    <span id="saveSitesStatus"></span>
+  </div>
+  <button id="openAll" type="button">Open all &amp; autofill</button>
+  <p class="hint">Opens each in a background tab, waits for it to load, then autofills. You still review and hit submit on each one yourself.</p>
+  <hr>
+  <div id="trainedInfo" class="hint"></div>
+  <button id="clearTrained" type="button" class="danger">Clear trained mappings</button>
+  <script src="fieldMap.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

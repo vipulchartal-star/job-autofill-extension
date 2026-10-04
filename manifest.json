@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Job Autofill",
+  "version": "1.0.0",
+  "description": "Auto-detects and fills common job application form fields from your saved profile.",
+  "permissions": ["storage", "activeTab", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "all_frames": true,
+      "js": ["fieldMap.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

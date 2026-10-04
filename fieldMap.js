@@ -1,0 +1,65 @@
+// Shared field dictionary: used by content.js (to detect+fill) and popup.js (to render the profile form).
+// Each entry: profile key -> { label, type, keywords[] }
+// type: 'text' | 'textarea' | 'boolean'
+// keywords matched against a normalized signal built from name/id/placeholder/aria-label/label text.
+
+const FIELD_DEFS = [
+  { key: 'firstName', label: 'First name', type: 'text',
+    keywords: ['firstname', 'first name', 'fname', 'givenname', 'given name'] },
+  { key: 'lastName', label: 'Last name', type: 'text',
+    keywords: ['lastname', 'last name', 'lname', 'surname', 'familyname', 'family name'] },
+  { key: 'fullName', label: 'Full name', type: 'text',
+    keywords: ['fullname', 'full name', 'yourname', 'your name', 'legalname', 'candidatename'] },
+  { key: 'email', label: 'Email', type: 'text',
+    keywords: ['email', 'e-mail', 'emailaddress'] },
+  { key: 'phone', label: 'Phone', type: 'text',
+    keywords: ['phone', 'mobile', 'cell', 'telephone', 'contactnumber', 'phonenumber'] },
+  { key: 'addressLine1', label: 'Address line 1', type: 'text',
+    keywords: ['address1', 'addressline1', 'streetaddress', 'street address', 'address'] },
+  { key: 'addressLine2', label: 'Address line 2', type: 'text',
+    keywords: ['address2', 'addressline2', 'apt', 'suite', 'unit'] },
+  { key: 'city', label: 'City', type: 'text', keywords: ['city', 'town'] },
+  { key: 'state', label: 'State / Province', type: 'text', keywords: ['state', 'province', 'region'] },
+  { key: 'zip', label: 'Zip / Postal code', type: 'text', keywords: ['zip', 'postal', 'postcode'] },
+  { key: 'country', label: 'Country', type: 'text', keywords: ['country', 'nation'] },
+  { key: 'linkedin', label: 'LinkedIn URL', type: 'text', keywords: ['linkedin'] },
+  { key: 'github', label: 'GitHub URL', type: 'text', keywords: ['github'] },
+  { key: 'portfolio', label: 'Portfolio / Website', type: 'text',
+    keywords: ['portfolio', 'website', 'personalsite', 'personal site'] },
+  { key: 'currentCompany', label: 'Current company', type: 'text',
+    keywords: ['currentcompany', 'current company', 'employer', 'company'] },
+  { key: 'currentTitle', label: 'Current job title', type: 'text',
+    keywords: ['currenttitle', 'jobtitle', 'job title', 'currentposition', 'position', 'role'] },
+  { key: 'yearsExperience', label: 'Years of experience', type: 'text',
+    keywords: ['yearsofexperience', 'years of experience', 'experience', 'yearsexperience'] },
+  { key: 'desiredSalary', label: 'Desired salary', type: 'text',
+    keywords: ['desiredsalary', 'expectedsalary', 'salaryexpectation', 'salary'] },
+  { key: 'noticePeriod', label: 'Notice period', type: 'text',
+    keywords: ['noticeperiod', 'notice period', 'availability', 'startdate', 'start date'] },
+  { key: 'school', label: 'School / University', type: 'text',
+    keywords: ['school', 'university', 'college', 'institution'] },
+  { key: 'degree', label: 'Degree', type: 'text', keywords: ['degree', 'qualification'] },
+  { key: 'fieldOfStudy', label: 'Field of study', type: 'text',
+    keywords: ['fieldofstudy', 'field of study', 'major', 'discipline'] },
+  { key: 'graduationYear', label: 'Graduation year', type: 'text',
+    keywords: ['graduationyear', 'graduation year', 'gradyear'] },
+  { key: 'summary', label: 'Summary / About', type: 'textarea',
+    keywords: ['summary', 'aboutyou', 'about you', 'bio', 'profilesummary'] },
+  { key: 'coverLetter', label: 'Cover letter', type: 'textarea',
+    keywords: ['coverletter', 'cover letter', 'motivationletter', 'whyareyouinterested', 'why do you want'] },
+  { key: 'howHeard', label: 'How did you hear about us', type: 'text',
+    keywords: ['howdidyouhear', 'how did you hear', 'referral', 'referredby', 'source'] },
+  { key: 'workAuthorized', label: 'Authorized to work (yes/no)', type: 'boolean',
+    keywords: ['authorizedtowork', 'legallyauthorized', 'work authorization', 'eligibletowork'] },
+  { key: 'needSponsorship', label: 'Need visa sponsorship (yes/no)', type: 'boolean',
+    keywords: ['sponsorship', 'requiresponsorship', 'visasponsorship', 'need sponsorship'] },
+  { key: 'willingToRelocate', label: 'Willing to relocate (yes/no)', type: 'boolean',
+    keywords: ['relocate', 'willingtorelocate', 'relocation'] },
+  { key: 'resumeText', label: 'Resume (plain text, for paste-resume fallback fields)', type: 'textarea',
+    keywords: ['resumetext', 'pasteresume', 'resume'] },
+];
+
+// Deliberately excluded: gender, race/ethnicity, disability, veteran status (EEO/voluntary
+// self-ID fields) — too sensitive to auto-answer; left for the applicant to fill by hand.
+
+if (typeof module !== 'undefined') module.exports = { FIELD_DEFS };

@@ -14,9 +14,15 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
+      "exclude_matches": ["https://web.whatsapp.com/*"],
       "all_frames": true,
       "js": ["fieldMap.js", "content.js"],
       "css": ["content.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["whatsapp.js"],
       "run_at": "document_idle"
     }
   ]

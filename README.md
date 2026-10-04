@@ -30,6 +30,26 @@ menu lets you pick which profile field it is (or "Ignore this field"). That mapp
 field + per site (`chrome.storage.local`) and applied automatically next time you're on that site —
 it takes priority over the generic keyword matching. Clear all trained mappings from the popup.
 
+## WhatsApp bridge (send info from here to a specific chat)
+
+With `npm run dev` running, POST to the dev server and the extension opens that exact WhatsApp
+Web chat with your text prefilled (via WhatsApp's own official `web.whatsapp.com/send?phone=&text=`
+deep link — no DOM-scripting of WhatsApp's internals):
+
+```bash
+./send-whatsapp.sh 919309555464 "Hi, following up on my application"
+```
+
+By default it only prefills the message box — you press Send yourself. Pass `autosend` as a
+third arg to have it click Send automatically after the text appears:
+
+```bash
+./send-whatsapp.sh 919309555464 "Hi, following up" autosend
+```
+
+Use autosend sparingly and only for messages you're sure about — it's a real send to a real
+contact, same as if you'd typed and hit enter.
+
 ## Known limits
 
 - **Resume/file upload fields can't be auto-filled** — browsers block scripts from setting

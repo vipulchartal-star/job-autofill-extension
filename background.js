@@ -21,6 +21,8 @@ function connectDevReload() {
         if (tabs[0]) chrome.tabs.reload(tabs[0].id);
       });
       chrome.runtime.reload();
+    } else if (msg.type === 'send_whatsapp') {
+      openWhatsappChat(msg.phone, msg.text, !!msg.autoSend);
     }
   });
   ws.addEventListener('close', () => setTimeout(connectDevReload, 2000));
@@ -28,6 +30,18 @@ function connectDevReload() {
 }
 connectDevReload();
 // --------------------------------------------------------------------------------------------
+
+// Opens WhatsApp Web's own official "click to chat" deep link for a specific phone number —
+// it prefills that chat's message box itself; whatsapp.js only clicks Send, and only if
+// autoSend was explicitly requested. Phone must be full international format, digits only
+// (e.g. "919309555464"), no "+" or spaces.
+function openWhatsappChat(phone, text, autoSend) {
+  const digits = String(phone || '').replace(/[^0-9]/g, '');
+  if (!digits || !text) return;
+  let url = `https://web.whatsapp.com/send?phone=${digits}&text=${encodeURIComponent(text)}`;
+  if (autoSend) url += '&_autosend=1';
+  chrome.tabs.create({ url });
+}
 
 // Pre-filled with what's actually known (name/email from local git config, GitHub profile
 // confirmed via api.github.com) — everything unverified (phone, address, company, etc.) is
